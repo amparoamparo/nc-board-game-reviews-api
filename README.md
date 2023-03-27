@@ -6,8 +6,8 @@
 
 To successfully connect to the databases locally, you will need to create two .env files:
 
-- `.env.test`, and
-- `.env.development`.
+- `.env.test`
+- `.env.development`
 
 Into each file, add:
 
