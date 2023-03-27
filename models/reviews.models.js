@@ -9,6 +9,13 @@ exports.fetchReviewById = (reviewId) => {
   return db.query(queryStr, [reviewId]).then((queryResponse) => {
     const fetchedReview = queryResponse.rows[0];
 
+    if (fetchedReview === undefined) {
+      return Promise.reject({
+        status: 404,
+        msg: "We couldn't find any reviews with that ID. Check your request and try again.",
+      });
+    }
+    
     return fetchedReview;
   });
 };

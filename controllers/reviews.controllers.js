@@ -5,13 +5,7 @@ exports.getReviewById = (req, res, next) => {
 
   fetchReviewById(reviewId)
     .then((fetchedReview) => {
-      if (fetchedReview !== undefined) {
-        res.status(200).send({ review: fetchedReview });
-      } else {
-        res.status(404).send({
-          msg: "We couldn't find any reviews with that ID. Check your request and try again.",
-        });
-      }
+      res.status(200).send({ review: fetchedReview });
     })
     .catch((err) => {
       next(err);
