@@ -33,7 +33,7 @@ describe("GET /api", () => {
         .expect(404)
         .then((response) => {
           expect(response.body.msg).toBe(
-            "Nothing to see here. Check your spelling and try again."
+            "Nothing here. Check your spelling and try again."
           );
         });
     });
@@ -79,7 +79,7 @@ describe("GET /api/categories", () => {
         .expect(404)
         .then((response) => {
           expect(response.body.msg).toBe(
-            "Nothing to see here. Check your spelling and try again."
+            "Nothing here. Check your spelling and try again."
           );
         });
     });
@@ -135,7 +135,73 @@ describe("GET /api/reviews/:review_id", () => {
         .expect(400)
         .then((response) => {
           expect(response.body.msg).toBe(
-            "Nothing to see here. Check your request and try again."
+            "Nothing here. Check your request and try again."
+          );
+        });
+    });
+  });
+});
+
+describe("GET /api/reviews", () => {
+  describe("SUCCESS", () => {
+    it("should respond with status code 200", () => {
+      return request(app).get("/api/reviews").expect(200);
+    });
+
+    it("should respond with an array containing all of the reviews", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          const { reviews } = body;
+          expect(reviews).toBeInstanceOf(Array);
+          expect(reviews).toHaveLength(13);
+        });
+    });
+
+    it('should respond with an array of objects where each object has certain properties, including "comment_count"', () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          const { reviews } = body;
+          expect(reviews).toBeInstanceOf(Array);
+          expect(reviews).toHaveLength(13);
+          reviews.forEach((review) => {
+            expect(review).toMatchObject({
+              owner: expect.any(String),
+              title: expect.any(String),
+              review_id: expect.any(Number),
+              category: expect.any(String),
+              review_img_url: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              designer: expect.any(String),
+              comment_count: expect.any(String),
+            });
+          });
+        });
+    });
+
+    it("should respond with an array of all the review objects ordered by date, in descending order", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          const { reviews } = body;
+          expect(reviews).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+  });
+
+  describe("ERROR", () => {
+    it('should respond with a "404: Not Found" error if there\'s a typo in the request URL', () => {
+      return request(app)
+        .get("/api/resivew")
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe(
+            "Nothing here. Check your spelling and try again."
           );
         });
     });
