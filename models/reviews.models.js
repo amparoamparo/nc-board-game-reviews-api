@@ -1,3 +1,4 @@
+const { query } = require("../db/connection");
 const db = require("../db/connection");
 
 exports.fetchAllReviews = () => {
@@ -46,7 +47,41 @@ exports.fetchReviewById = (reviewId) => {
         msg: "We couldn't find any reviews with that ID. Check your request and try again.",
       });
     }
-    
+
     return fetchedReview;
+  });
+};
+
+exports.fetchReviewComments = (reviewId) => {
+  const queryStr = `
+    SELECT
+      *
+    FROM
+      comments
+    WHERE
+      review_id = $1
+    ORDER BY
+      created_at DESC
+  `;
+
+  return db.query(queryStr, [reviewId]).then((queryResponse) => {
+    const reviewComments = queryResponse.rows;
+
+    if (!reviewComments.length) {
+      return db
+        .query(`SELECT * FROM reviews WHERE review_id = $1`, [reviewId])
+        .then((queryResponse) => {
+          if (queryResponse.rowCount === 0) {
+            return Promise.reject({
+              status: 404,
+              msg: "We couldn't find any reviews with that ID. Check your request and try again.",
+            });
+          } else {
+            return reviewComments;
+          }
+        });
+    }
+
+    return reviewComments;
   });
 };
