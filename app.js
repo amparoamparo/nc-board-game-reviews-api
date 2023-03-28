@@ -1,6 +1,9 @@
 const express = require("express");
 const { getCategories } = require("./controllers/categories.controllers");
-const { getReviewById } = require("./controllers/reviews.controllers");
+const {
+  getReviews,
+  getReviewById,
+} = require("./controllers/reviews.controllers");
 const {
   handleCustomErrors,
   handleOtherErrors,
@@ -14,12 +17,14 @@ app.get("/api", (req, res) => {
 
 app.get("/api/categories", getCategories);
 
+app.get("/api/reviews", getReviews);
+
 app.get("/api/reviews/:review_id", getReviewById);
 
 // handle all 404 errors
 app.use("*", (req, res) => {
   res.status(404).send({
-    msg: "Nothing to see here. Check your spelling and try again.",
+    msg: "Nothing here. Check your spelling and try again.",
   });
 });
 
