@@ -5,9 +5,7 @@ exports.handleCustomErrors = (err, req, res, next) => {
     res.status(400).send({
       msg: "Something's not quite right with your request. Check your spelling and try again.",
     });
-  }
-
-  if (
+  } else if (
     err.code === "22003" &&
     req.path.includes("review") &&
     req.method === "GET"
