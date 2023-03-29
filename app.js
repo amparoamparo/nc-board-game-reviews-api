@@ -3,6 +3,7 @@ const { getCategories } = require("./controllers/categories.controllers");
 const {
   getReviews,
   getReviewById,
+  getReviewComments,
 } = require("./controllers/reviews.controllers");
 const {
   handleCustomErrors,
@@ -20,6 +21,8 @@ app.get("/api/categories", getCategories);
 app.get("/api/reviews", getReviews);
 
 app.get("/api/reviews/:review_id", getReviewById);
+
+app.get("/api/reviews/:review_id/comments", getReviewComments);
 
 // handle all 404 errors
 app.use("*", (req, res) => {
