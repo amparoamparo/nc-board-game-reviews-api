@@ -8,6 +8,7 @@ const {
 const {
   getReviewComments,
   postComment,
+  deleteComment,
 } = require("./controllers/comments.controllers");
 const {
   handleCustomErrors,
@@ -33,6 +34,8 @@ app.patch("/api/reviews/:review_id", patchReviewVotes);
 app.get("/api/reviews/:review_id/comments", getReviewComments);
 
 app.post("/api/reviews/:review_id/comments", postComment);
+
+app.delete("/api/comments/:comment_id", deleteComment);
 
 // handle all 404 errors
 app.use("*", (req, res) => {

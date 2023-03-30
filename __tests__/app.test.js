@@ -474,9 +474,21 @@ describe("🩹 Method: PATCH", () => {
     });
 
     describe("❌ ERROR", () => {
-      it('should respond with a "404: Not Found" error if the given review_id doesn\'t exist or is out of range', () => {
+      it('should respond with a "404: Not Found" error if the given review_id doesn\'t exist', () => {
         return request(app)
           .patch("/api/reviews/666")
+          .send({ inc_votes: 1 })
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe(
+              "We couldn't find any reviews with that ID. Check your request and try again."
+            );
+          });
+      });
+
+      it('should respond with a "404: Not Found" error if the given review_id is out of range', () => {
+        return request(app)
+          .patch("/api/reviews/666666666666666666666666666")
           .send({ inc_votes: 1 })
           .expect(404)
           .then((response) => {
@@ -518,6 +530,56 @@ describe("🩹 Method: PATCH", () => {
           .then((response) => {
             expect(response.body.msg).toBe(
               "There seems to be some data missing. Check your request and try again."
+            );
+          });
+      });
+    });
+  });
+});
+
+describe("🗑️  Method: DELETE", () => {
+  describe("DELETE /api/comments/:comment_id", () => {
+    describe("🎉 SUCCESS", () => {
+      it("should respond with status code 204 and no content", () => {
+        return request(app)
+          .delete("/api/comments/1")
+          .expect(204)
+          .then((response) => {
+            expect(response.noContent).toBe(true);
+          });
+      });
+    });
+
+    describe("❌ ERROR", () => {
+      it('should respond with a "404: Not Found" error if the comment ID doesn\'t exist', () => {
+        return request(app)
+          .delete("/api/comments/666")
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe(
+              "We couldn't find any comments with that ID. Check your request and try again."
+            );
+          });
+      });
+
+      it('should respond with a "404: Not Found" error if the comment ID is out of range', () => {
+        return request(app)
+          .delete("/api/comments/66666666666666666666666666666")
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe(
+              "We couldn't find any comments with that ID. Check your request and try again."
+            );
+          });
+      });
+
+      it('should respond with a "400: Bad Request" error if the comment ID is not valid', () => {
+        return request(app)
+          .delete("/api/comments/mycomment_id")
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe(
+              "Something's not quite right with your request. Check your spelling and try again."
             );
           });
       });

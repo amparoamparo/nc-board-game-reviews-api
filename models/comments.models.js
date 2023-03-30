@@ -51,3 +51,24 @@ exports.createComment = (reviewId, commentAuthor, commentContent) => {
       return postedComment;
     });
 };
+
+exports.removeComment = (commentId) => {
+  queryStr = `
+  DELETE FROM comments
+  WHERE comment_id = $1
+  RETURNING *;
+  `;
+
+  return db.query(queryStr, [commentId]).then((queryResponse) => {
+    const deletedComment = queryResponse.rows[0];
+
+    if (deletedComment === undefined) {
+      return Promise.reject({
+        status: 404,
+        msg: "We couldn't find any comments with that ID. Check your request and try again.",
+      });
+    }
+
+    return deletedComment;
+  });
+};
