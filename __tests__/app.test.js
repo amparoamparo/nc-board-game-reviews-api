@@ -14,7 +14,7 @@ afterAll(() => {
 
 describe("🔎 Method: GET", () => {
   describe("GET /api", () => {
-    describe("SUCCESS", () => {
+    describe("🎉 SUCCESS", () => {
       it("should respond with a status code of 200 and a welcome message", () => {
         return request(app)
           .get("/api")
@@ -27,7 +27,7 @@ describe("🔎 Method: GET", () => {
       });
     });
 
-    describe("ERROR", () => {
+    describe("❌ ERROR", () => {
       it('should respond with a "404: Not Found" error if there\'s a typo in the request URL', () => {
         return request(app)
           .get("/aip")
@@ -42,7 +42,7 @@ describe("🔎 Method: GET", () => {
   });
 
   describe("GET /api/categories", () => {
-    describe("SUCCESS", () => {
+    describe("🎉 SUCCESS", () => {
       it("should respond with status code 200", () => {
         return request(app).get("/api/categories").expect(200);
       });
@@ -73,7 +73,7 @@ describe("🔎 Method: GET", () => {
       });
     });
 
-    describe("ERROR", () => {
+    describe("❌ ERROR", () => {
       it('should respond with a "404: Not Found" error if there\'s a typo in the request URL', () => {
         return request(app)
           .get("/api/categoirse")
@@ -88,7 +88,7 @@ describe("🔎 Method: GET", () => {
   });
 
   describe("GET /api/reviews", () => {
-    describe("SUCCESS", () => {
+    describe("🎉 SUCCESS", () => {
       it("should respond with status code 200", () => {
         return request(app).get("/api/reviews").expect(200);
       });
@@ -139,7 +139,7 @@ describe("🔎 Method: GET", () => {
       });
     });
 
-    describe("ERROR", () => {
+    describe("❌ ERROR", () => {
       it('should respond with a "404: Not Found" error if there\'s a typo in the request URL', () => {
         return request(app)
           .get("/api/resivew")
@@ -154,7 +154,7 @@ describe("🔎 Method: GET", () => {
   });
 
   describe("GET /api/reviews/:review_id", () => {
-    describe("SUCESS", () => {
+    describe("🎉 SUCCESS", () => {
       it("should respond with status code 200", () => {
         return request(app).get("/api/reviews/1").expect(200);
       });
@@ -184,7 +184,7 @@ describe("🔎 Method: GET", () => {
       });
     });
 
-    describe("ERROR", () => {
+    describe("❌ ERROR", () => {
       it('should respond with a "404: Not Found" error if the requested review_id is valid but doesn\'t currently exist in the database', () => {
         return request(app)
           .get("/api/reviews/999")
@@ -221,7 +221,7 @@ describe("🔎 Method: GET", () => {
   });
 
   describe("GET /api/reviews/:review_id/comments", () => {
-    describe("SUCCESS", () => {
+    describe("🎉 SUCCESS", () => {
       it("should respond with status code 200", () => {
         return request(app).get("/api/reviews/3/comments").expect(200);
       });
@@ -272,7 +272,7 @@ describe("🔎 Method: GET", () => {
       });
     });
 
-    describe("ERROR", () => {
+    describe("❌ ERROR", () => {
       it('should respond with a "404: Not Found" error if the given review ID doesn\'t exist', () => {
         return request(app)
           .get("/api/reviews/6666666666666666666666666/comments")
@@ -311,7 +311,7 @@ describe("🔎 Method: GET", () => {
 
 describe("✏️  Method: POST", () => {
   describe("POST /api/reviews/:review_id/comments", () => {
-    describe("SUCCESS", () => {
+    describe("🎉 SUCCESS", () => {
       it("should respond with status code 201", () => {
         const testComment = {
           username: "mallionaire",
@@ -351,7 +351,7 @@ describe("✏️  Method: POST", () => {
       });
     });
 
-    describe("ERROR", () => {
+    describe("❌ ERROR", () => {
       it('should respond with a "400: Bad Request" error if there\'s no username in the request body', () => {
         const testComment = {
           body: "*** NEW TEST COMMENT ***",
@@ -414,6 +414,110 @@ describe("✏️  Method: POST", () => {
           .then((response) => {
             expect(response.body.msg).toBe(
               "We couldn't find any users with that username. Check your request and try again."
+            );
+          });
+      });
+    });
+  });
+});
+
+describe("🩹 Method: PATCH", () => {
+  describe("PATCH /api/reviews/:review_id (votes)", () => {
+    describe("🎉 SUCCESS", () => {
+      it("should respond with status code 200 and the corresponding review object with its votes property increased", () => {
+        return request(app)
+          .patch("/api/reviews/1")
+          .send({ inc_votes: 1 })
+          .expect(200)
+          .then(({ body }) => {
+            const { updatedReview } = body;
+            const updatedTestReview = {
+              review_id: 1,
+              title: "Agricola",
+              category: "euro game",
+              designer: "Uwe Rosenberg",
+              owner: "mallionaire",
+              review_body: "Farmyard fun!",
+              review_img_url:
+                "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+              created_at: "2021-01-18T10:00:20.514Z",
+              votes: 2,
+            };
+
+            expect(updatedReview).toEqual(updatedTestReview);
+          });
+      });
+
+      it("should respond with status code 200 and the corresponding review object with its votes property decreased", () => {
+        return request(app)
+          .patch("/api/reviews/1")
+          .send({ inc_votes: -100 })
+          .expect(200)
+          .then(({ body }) => {
+            const { updatedReview } = body;
+            const updatedTestReview = {
+              review_id: 1,
+              title: "Agricola",
+              category: "euro game",
+              designer: "Uwe Rosenberg",
+              owner: "mallionaire",
+              review_body: "Farmyard fun!",
+              review_img_url:
+                "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+              created_at: "2021-01-18T10:00:20.514Z",
+              votes: -99,
+            };
+
+            expect(updatedReview).toEqual(updatedTestReview);
+          });
+      });
+    });
+
+    describe("❌ ERROR", () => {
+      it('should respond with a "404: Not Found" error if the given review_id doesn\'t exist or is out of range', () => {
+        return request(app)
+          .patch("/api/reviews/666")
+          .send({ inc_votes: 1 })
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe(
+              "We couldn't find any reviews with that ID. Check your request and try again."
+            );
+          });
+      });
+
+      it('should respond with a "400: Bad Request" error if the given review_id is not valid (e.g. not a number)', () => {
+        return request(app)
+          .patch("/api/reviews/sixsixsix")
+          .send({ inc_votes: 1 })
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe(
+              "Something's not quite right with your request. Check your spelling and try again."
+            );
+          });
+      });
+
+      it('should respond with a "400: Bad Request" error if the given value of "inc_votes" is not valid (e.g. not a number)', () => {
+        return request(app)
+          .patch("/api/reviews/1")
+          .send({ inc_votes: "six" })
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe(
+              "Something's not quite right with your request. Check your spelling and try again."
+            );
+          });
+      });
+
+      it('should respond with a "400: Bad Request" error if no "inc_votes" given', () => {
+        return request(app)
+          .patch("/api/reviews/1")
+          .send()
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe(
+              "There seems to be some data missing. Check your request and try again."
             );
           });
       });
