@@ -11,6 +11,11 @@ exports.handleCustomErrors = (err, req, res, next) => {
     res.status(404).send({
       msg: "We couldn't find any reviews with that ID. Check your request and try again.",
     });
+  } else if (err.code === "22003" && req.path.includes("comment")) {
+    // number too big
+    res.status(404).send({
+      msg: "We couldn't find any comments with that ID. Check your request and try again.",
+    });
   } else if (
     err.code === "23503" &&
     req.path.includes("review") &&
