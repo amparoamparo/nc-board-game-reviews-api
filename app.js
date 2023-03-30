@@ -3,14 +3,19 @@ const { getCategories } = require("./controllers/categories.controllers");
 const {
   getReviews,
   getReviewById,
-  getReviewComments,
 } = require("./controllers/reviews.controllers");
+const {
+  getReviewComments,
+  postComment,
+} = require("./controllers/comments.controllers");
 const {
   handleCustomErrors,
   handleOtherErrors,
 } = require("./controllers/errors.controllers");
 
 const app = express();
+
+app.use(express.json());
 
 app.get("/api", (req, res) => {
   res.status(200).send({ msg: "Welcome to the Board Game Reviews API" });
@@ -23,6 +28,8 @@ app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id", getReviewById);
 
 app.get("/api/reviews/:review_id/comments", getReviewComments);
+
+app.post("/api/reviews/:review_id/comments", postComment);
 
 // handle all 404 errors
 app.use("*", (req, res) => {
