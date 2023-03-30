@@ -50,3 +50,30 @@ exports.fetchReviewById = (reviewId) => {
     return fetchedReview;
   });
 };
+
+exports.updateVotes = (reviewId, increaseVotesBy) => {
+  const queryStr = `
+    UPDATE
+      reviews
+    SET
+      votes = votes + $2
+    WHERE
+      review_id = $1
+
+    RETURNING *;`;
+
+  return db
+    .query(queryStr, [reviewId, increaseVotesBy])
+    .then((queryResponse) => {
+      const updatedReview = queryResponse.rows[0];
+
+      if (updatedReview === undefined) {
+        return Promise.reject({
+          status: 404,
+          msg: "We couldn't find any reviews with that ID. Check your request and try again.",
+        });
+      }
+
+      return updatedReview;
+    });
+};
