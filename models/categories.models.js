@@ -1,10 +1,10 @@
 const db = require("../db/connection");
 
-exports.fetchCategories = () => {
+exports.fetchAllCategories = () => {
   const queryStr = `SELECT * FROM categories`;
 
-  return db.query(queryStr).then((categories) => {
-    const allCategories = categories.rows;
+  return db.query(queryStr).then((queryResult) => {
+    const allCategories = queryResult.rows;
 
     return allCategories;
   });

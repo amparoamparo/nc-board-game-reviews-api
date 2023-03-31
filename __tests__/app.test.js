@@ -307,6 +307,51 @@ describe("🔎 Method: GET", () => {
       });
     });
   });
+
+  describe("GET /api/users", () => {
+    describe("🎉 SUCCESS", () => {
+      it("should respond with status code 200 and an array containing all of the users objects", () => {
+        return request(app)
+          .get("/api/users")
+          .expect(200)
+          .then(({ body }) => {
+            const { users } = body;
+            expect(users).toBeInstanceOf(Array);
+            expect(users).toHaveLength(4);
+          });
+      });
+
+      it('should respond with an array of objects where each object has "username", "name" and "avatar_url" properties', () => {
+        return request(app)
+          .get("/api/users")
+          .expect(200)
+          .then(({ body }) => {
+            const { users } = body;
+            expect(users).toHaveLength(4);
+            users.forEach((user) => {
+              expect(user).toMatchObject({
+                username: expect.any(String),
+                name: expect.any(String),
+                avatar_url: expect.any(String),
+              });
+            });
+          });
+      });
+    });
+
+    describe("❌ ERROR", () => {
+      it('should respond with a "404: Not Found" error if there\'s a typo in the request URL', () => {
+        return request(app)
+          .get("/api/usesr")
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe(
+              "Nothing here. Check your spelling and try again."
+            );
+          });
+      });
+    });
+  });
 });
 
 describe("✏️  Method: POST", () => {
