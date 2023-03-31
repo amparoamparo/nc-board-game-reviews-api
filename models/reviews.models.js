@@ -24,8 +24,8 @@ exports.fetchAllReviews = () => {
       reviews.created_at DESC;
   `;
 
-  return db.query(queryStr).then((reviews) => {
-    const allReviews = reviews.rows;
+  return db.query(queryStr).then((queryResult) => {
+    const allReviews = queryResult.rows;
 
     return allReviews;
   });
@@ -37,8 +37,8 @@ exports.fetchReviewById = (reviewId) => {
   WHERE review_id = $1
   `;
 
-  return db.query(queryStr, [reviewId]).then((queryResponse) => {
-    const fetchedReview = queryResponse.rows[0];
+  return db.query(queryStr, [reviewId]).then((queryResult) => {
+    const fetchedReview = queryResult.rows[0];
 
     if (fetchedReview === undefined) {
       return Promise.reject({
@@ -62,18 +62,16 @@ exports.updateVotes = (reviewId, increaseVotesBy) => {
 
     RETURNING *;`;
 
-  return db
-    .query(queryStr, [reviewId, increaseVotesBy])
-    .then((queryResponse) => {
-      const updatedReview = queryResponse.rows[0];
+  return db.query(queryStr, [reviewId, increaseVotesBy]).then((queryResult) => {
+    const updatedReview = queryResult.rows[0];
 
-      if (updatedReview === undefined) {
-        return Promise.reject({
-          status: 404,
-          msg: "We couldn't find any reviews with that ID. Check your request and try again.",
-        });
-      }
+    if (updatedReview === undefined) {
+      return Promise.reject({
+        status: 404,
+        msg: "We couldn't find any reviews with that ID. Check your request and try again.",
+      });
+    }
 
-      return updatedReview;
-    });
+    return updatedReview;
+  });
 };

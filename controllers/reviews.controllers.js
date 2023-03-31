@@ -6,8 +6,8 @@ const {
 
 exports.getReviews = (req, res, next) => {
   fetchAllReviews()
-    .then((reviews) => {
-      res.status(200).send({ reviews });
+    .then((allReviews) => {
+      res.status(200).send({ reviews: allReviews });
     })
     .catch((err) => {
       next(err);

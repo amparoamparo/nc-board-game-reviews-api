@@ -12,14 +12,14 @@ exports.fetchReviewComments = (reviewId) => {
       created_at DESC
   `;
 
-  return db.query(queryStr, [reviewId]).then((queryResponse) => {
-    const reviewComments = queryResponse.rows;
+  return db.query(queryStr, [reviewId]).then((queryResult) => {
+    const reviewComments = queryResult.rows;
 
     if (!reviewComments.length) {
       return db
         .query(`SELECT * FROM reviews WHERE review_id = $1`, [reviewId])
-        .then((queryResponse) => {
-          if (queryResponse.rowCount === 0) {
+        .then((queryResult) => {
+          if (queryResult.rowCount === 0) {
             return Promise.reject({
               status: 404,
               msg: "We couldn't find any reviews with that ID. Check your request and try again.",
@@ -45,8 +45,8 @@ exports.createComment = (reviewId, commentAuthor, commentContent) => {
 
   return db
     .query(queryStr, [reviewId, commentAuthor, commentContent])
-    .then((newComment) => {
-      const postedComment = newComment.rows[0];
+    .then((queryResult) => {
+      const postedComment = queryResult.rows[0];
 
       return postedComment;
     });
@@ -59,8 +59,8 @@ exports.removeComment = (commentId) => {
   RETURNING *;
   `;
 
-  return db.query(queryStr, [commentId]).then((queryResponse) => {
-    const deletedComment = queryResponse.rows[0];
+  return db.query(queryStr, [commentId]).then((queryResult) => {
+    const deletedComment = queryResult.rows[0];
 
     if (deletedComment === undefined) {
       return Promise.reject({
