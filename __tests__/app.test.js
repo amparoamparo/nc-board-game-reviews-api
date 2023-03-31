@@ -153,6 +153,180 @@ describe("🔎 Method: GET", () => {
     });
   });
 
+  describe("QUERIES /api/reviews", () => {
+    describe("category", () => {
+      describe("🎉 SUCCESS", () => {
+        it("should respond with status code 200 and an array of all review objects in that category", () => {
+          return request(app)
+            .get("/api/reviews?category=euro%20game")
+            .expect(200)
+            .then(({ body }) => {
+              const { reviews } = body;
+
+              expect(reviews).toBeInstanceOf(Array);
+              expect(reviews).toHaveLength(1);
+              reviews.forEach((review) => {
+                expect(review).toMatchObject({
+                  owner: expect.any(String),
+                  title: expect.any(String),
+                  review_id: expect.any(Number),
+                  category: expect.any(String),
+                  review_img_url: expect.any(String),
+                  created_at: expect.any(String),
+                  votes: expect.any(Number),
+                  designer: expect.any(String),
+                  comment_count: expect.any(String),
+                });
+              });
+            });
+        });
+      });
+
+      describe("❌ ERROR", () => {
+        it('should respond with a "404: Not Found" error if the category doesn\'t exist', () => {
+          return request(app)
+            .get("/api/reviews?category=displacement")
+            .expect(404)
+            .then((response) => {
+              expect(response.body.msg).toBe(
+                "Either that category doesn't exist, or we couldn't find any reviews in that category. Check your request and try again."
+              );
+            });
+        });
+
+        it('should respond with a "404: Not Found" error if the category exists, but it has no reviews', () => {
+          return request(app)
+            .get("/api/reviews?category=children%27s%20games")
+            .expect(404)
+            .then((response) => {
+              expect(response.body.msg).toBe(
+                "Either that category doesn't exist, or we couldn't find any reviews in that category. Check your request and try again."
+              );
+            });
+        });
+      });
+    });
+
+    describe("sort_by", () => {
+      describe("🎉 SUCCESS", () => {
+        it("sorts the reviews by owner, in descending order by default", () => {
+          return request(app)
+            .get("/api/reviews?sort_by=owner")
+            .expect(200)
+            .then(({ body }) => {
+              const { reviews } = body;
+              expect(reviews).toBeSortedBy("owner", { descending: true });
+            });
+        });
+
+        it("sorts the reviews by any valid column, in descending order by default", async () => {
+          const requests = [
+            request(app).get("/api/reviews?sort_by=owner"),
+            request(app).get("/api/reviews?sort_by=title"),
+            request(app).get("/api/reviews?sort_by=review_id"),
+            request(app).get("/api/reviews?sort_by=category"),
+            request(app).get("/api/reviews?sort_by=review_img_url"),
+            request(app).get("/api/reviews?sort_by=votes"),
+            request(app).get("/api/reviews?sort_by=designer"),
+            request(app).get("/api/reviews?sort_by=comment_count"),
+          ];
+
+          const responses = await Promise.all(requests);
+
+          // Assert on the response of each request
+          responses.forEach((response) => {
+            expect(response.statusCode).toBe(200);
+          });
+
+          expect(responses[0].body.reviews).toBeSortedBy("owner", { descending: true, }); // prettier-ignore
+          expect(responses[1].body.reviews).toBeSortedBy("title", { descending: true, }); // prettier-ignore
+          expect(responses[2].body.reviews).toBeSortedBy("review_id", { descending: true, }); // prettier-ignore
+          expect(responses[3].body.reviews).toBeSortedBy("category", { descending: true, }); // prettier-ignore
+          expect(responses[4].body.reviews).toBeSortedBy("review_img_url", { descending: true, }); // prettier-ignore
+          expect(responses[5].body.reviews).toBeSortedBy("votes", { descending: true, }); // prettier-ignore
+          expect(responses[6].body.reviews).toBeSortedBy("designer", { descending: true, }); // prettier-ignore
+          expect(responses[7].body.reviews).toBeSortedBy("comment_count", { descending: true, }); // prettier-ignore
+        });
+
+        it("sorts the reviews by date, in descending order, if there's no sort_by value", () => {
+          return request(app)
+            .get("/api/reviews?sort_by=")
+            .expect(200)
+            .then(({ body }) => {
+              const { reviews } = body;
+              expect(reviews).toBeSortedBy("created_at", {
+                descending: true,
+              });
+            });
+        });
+      });
+
+      describe("❌ ERROR", () => {
+        it('should respond with a "400: Bad Request" error if the sort query parameter is not valid', () => {
+          return request(app)
+            .get("/api/reviews?sort_by=date")
+            .expect(400)
+            .then((response) => {
+              expect(response.body.msg).toBe(
+                "That's not a valid sort query parameter. Try one of these instead: 'owner', 'title', 'review_id', 'category', 'review_img_url', 'created_at', 'votes', 'designer', or 'comment_count'. If you don't include a sort parameter, we'll sort them by date."
+              );
+            });
+        });
+      });
+    });
+
+    describe("order", () => {
+      describe("🎉 SUCCESS", () => {
+        it("responds with the reviews in ascending order, depending on the sort_by parameters", () => {
+          return request(app)
+            .get("/api/reviews?sort_by=owner&order=asc")
+            .expect(200)
+            .then(({ body }) => {
+              const { reviews } = body;
+              expect(reviews).toBeSortedBy("owner", { descending: false });
+            });
+        });
+
+        it("responds with the reviews in descending order, depending on the sort_by parameters", () => {
+          return request(app)
+            .get("/api/reviews?sort_by=comment_count&order=desc")
+            .expect(200)
+            .then(({ body }) => {
+              const { reviews } = body;
+              expect(reviews).toBeSortedBy("comment_count", {
+                descending: true,
+              });
+            });
+        });
+
+        it("responds with the reviews in descending order by default (i.e. if there's no order parameter)", () => {
+          return request(app)
+            .get("/api/reviews?sort_by=comment_count&order=")
+            .expect(200)
+            .then(({ body }) => {
+              const { reviews } = body;
+              expect(reviews).toBeSortedBy("comment_count", {
+                descending: true,
+              });
+            });
+        });
+      });
+
+      describe("❌ ERROR", () => {
+        it('should respond with a "400: Bad Request" error if the order query parameter is not valid', () => {
+          return request(app)
+            .get("/api/reviews?order=random")
+            .expect(400)
+            .then((response) => {
+              expect(response.body.msg).toBe(
+                "That's not a valid order query parameter. To sort the reviews in ascending order, try 'asc'. Otherwise, we'll sort them in descending order by default."
+              );
+            });
+        });
+      });
+    });
+  });
+
   describe("GET /api/reviews/:review_id", () => {
     describe("🎉 SUCCESS", () => {
       it("should respond with status code 200", () => {
