@@ -131,8 +131,21 @@ exports.fetchReviewsByCategory = (category) => {
 
 exports.fetchReviewById = (reviewId) => {
   const queryStr = `
-  SELECT * FROM reviews
-  WHERE review_id = $1
+  SELECT
+    reviews.*,
+    Count(comments.review_id) as comment_count
+  FROM
+    reviews
+  LEFT JOIN
+    comments
+  ON
+    reviews.review_id = comments.review_id
+  WHERE
+    reviews.review_id = $1
+  GROUP BY
+    reviews.review_id
+  ORDER BY
+    reviews.created_at DESC;
   `;
 
   return db.query(queryStr, [reviewId]).then((queryResult) => {

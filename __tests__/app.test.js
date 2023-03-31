@@ -351,6 +351,7 @@ describe("🔎 Method: GET", () => {
                 "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
               created_at: "2021-01-18T10:00:20.514Z",
               votes: 1,
+              comment_count: "0",
             });
 
             expect(review).toHaveProperty("review_id", 1);
