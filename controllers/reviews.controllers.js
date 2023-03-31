@@ -1,14 +1,18 @@
 const {
-  fetchAllReviews,
+  fetchReviews,
   fetchReviewById,
   updateVotes,
+  checkCategoryExists,
 } = require("../models/reviews.models");
 
 exports.getReviews = (req, res, next) => {
-  fetchAllReviews()
-    .then((allReviews) => {
-      res.status(200).send({ reviews: allReviews });
+  const { category, sort_by, order } = req.query;
+
+  fetchReviews(category, sort_by, order)
+    .then((fetchedReview) => {
+      res.status(200).send({ reviews: fetchedReview });
     })
+
     .catch((err) => {
       next(err);
     });
