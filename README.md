@@ -4,7 +4,7 @@
 
 It's a RESTful API that contains reviews for board games.
 
-You can filter reviews by category, 'upvote' and 'downvote' reviews, and post (and delete) comments.
+You can filter reviews by category, as well as 'upvote' and 'downvote' reviews, and post (and delete) comments.
 
 To see all available endpoints and options, see [available endpoints](endpoints.md).
 
