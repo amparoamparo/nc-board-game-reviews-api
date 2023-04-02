@@ -3,6 +3,7 @@ const request = require("supertest");
 const db = require("../db/connection");
 const data = require("../db/data/test-data");
 const seed = require("../db/seeds/seed");
+const endpoints = require("../endpoints.json");
 
 beforeEach(() => {
   return seed(data);
@@ -13,16 +14,29 @@ afterAll(() => {
 });
 
 describe("🔎 Method: GET", () => {
+  describe("🎉 SUCCESS", () => {
+    describe("GET /", () => {
+      it("should respond with a welcome message (Note: this will change once frontend is ready)", () => {
+        return request(app)
+          .get("/")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.msg).toBe(
+              "Welcome to the Board Game Reviews API! To begin, go to '/api'."
+            );
+          });
+      });
+    });
+  });
+
   describe("GET /api", () => {
     describe("🎉 SUCCESS", () => {
-      it("should respond with a status code of 200 and a welcome message", () => {
+      it("should respond with a status code of 200 and a JSON file describing all endpoints", () => {
         return request(app)
           .get("/api")
           .expect(200)
           .then((response) => {
-            expect(response.body.msg).toBe(
-              "Welcome to the Board Game Reviews API"
-            );
+            expect(response.body).toEqual(endpoints);
           });
       });
     });

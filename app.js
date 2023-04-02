@@ -15,14 +15,20 @@ const {
   handleCustomErrors,
   handleOtherErrors,
 } = require("./controllers/errors.controllers");
+const endpoints = require("./endpoints.json");
 
 const app = express();
 
 app.use(express.json());
 
-// main
+// home
+app.get("/", (req, res) => {
+  res.status(200).send({msg: "Welcome to the Board Game Reviews API! To begin, go to '/api'."})
+})
+
+// api
 app.get("/api", (req, res) => {
-  res.status(200).send({ msg: "Welcome to the Board Game Reviews API" });
+  res.status(200).json(endpoints);
 });
 
 // categories
