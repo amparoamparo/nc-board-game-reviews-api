@@ -53,7 +53,7 @@ Here's a table describing the different `sort_by` options:
 | --- | --- |
 | owner | The author of the review |
 | title | The title of the review |
-| review_id | The review's ID |
+| review_id | The ID of the review |
 | category | The category the review belongs to |
 | review_img_url | The url of the review's image |
 | created_at | When the review was posted |
@@ -132,4 +132,4 @@ It requires an object like this one:
 
 ### DELETE `/api/comments/comment_id`
 
-This endpoint lets you to delete a comment by its comment ID, using the `DELETE` method.
+This endpoint lets you delete a comment by its comment ID, using the `DELETE` method.
