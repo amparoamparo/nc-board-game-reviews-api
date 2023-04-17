@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const { getCategories } = require("./controllers/categories.controllers");
 const {
   getReviews,
@@ -19,12 +20,16 @@ const endpoints = require("./endpoints.json");
 
 const app = express();
 
+app.use(cors());
+
 app.use(express.json());
 
 // home
 app.get("/", (req, res) => {
-  res.status(200).send({msg: "Welcome to the Board Game Reviews API! To begin, go to '/api'."})
-})
+  res.status(200).send({
+    msg: "Welcome to the Board Game Reviews API! To begin, go to '/api'.",
+  });
+});
 
 // api
 app.get("/api", (req, res) => {
