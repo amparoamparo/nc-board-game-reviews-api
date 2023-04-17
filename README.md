@@ -25,7 +25,7 @@ Starter files and all data were provided by Northcoders.
 
 ## Live version
 
-I hosted the API using [ElephantSQL](https://www.elephantsql.com/) and [Railway](https://railway.app/).
+I hosted the API using [ElephantSQL](https://www.elephantsql.com/) and [render](https://render.com/).
 
 Take a look at the [live version](https://board-game-reviews.up.railway.app).
 
